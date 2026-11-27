@@ -4,41 +4,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analicia</title>
+    <title>Analicia Parish · Sociology</title>
     <link rel="stylesheet" href="style.css">
+    <!-- "defer" runs the script after the HTML is parsed, so it can find every element. -->
+    <script src="script.js" defer></script>
 </head>
 
 <body>
-    <h1>Analicia</h1>
-    <p>Welcome to my website!</p>
+    <!-- PINNED NAME BAR
+         The name starts huge over the dots. As you scroll, script.js shrinks it
+         into this bar at the top, and the bar's background and links fade in. -->
+    <div class="pin-bg" aria-hidden="true"></div>
+    <div class="pin">
+        <h1 class="pin-name">Analicia</h1>
+        <nav class="pin-nav" aria-label="Main">
+            <a class="pin-link" href="#about">About</a>
+            <a class="pin-link" href="#publications">Publications</a>
+            <a class="cv-button cv-button--bar" href="cv.pdf" download>Download CV</a>
+        </nav>
+    </div>
 
-    <section id="about">
-        <h2>About</h2>
-        <p>Write a Bio here.</p>
+    <!-- HERO: script.js draws the dots into the canvas, adds the theme buttons
+         and builds the marquee from the publication list further down. -->
+    <header class="hero">
+        <canvas class="dot-field" aria-hidden="true"></canvas>
+
+        <div class="hero-inner">
+            <div class="theme-filters" role="group" aria-label="Filter publications by theme"></div>
+            <p class="hint">Hover to preview a theme. Click to filter the publications below.</p>
+        </div>
+
+        <div class="marquee" aria-label="Publications">
+            <div class="marquee-track"></div>
+        </div>
+    </header>
+
+    <section class="about" id="about">
+        <!-- PORTRAIT PLACEHOLDER: when the photo is ready, replace this <figure> with:
+             <figure class="portrait">
+                 <img src="images/analicia.jpg" alt="Portrait of Analicia Parish" width="800" height="1000">
+             </figure> -->
+        <figure class="portrait portrait--placeholder">
+            <div class="portrait-frame" role="img" aria-label="Portrait placeholder">
+                <span>Portrait coming soon</span>
+            </div>
+        </figure>
+
+        <div class="about-text">
+            <h2>About</h2>
+            <p>Write a Bio here.</p>
+
+            <dl class="facts">
+                <dt>Education</dt>
+                <dd>Sociology, University of San Francisco</dd>
+                <dt>Honors</dt>
+                <dd>Honors concentration in Sociology</dd>
+                <dt>Minor</dt>
+                <dd>Advertising</dd>
+            </dl>
+
+            <!-- CV DOWNLOAD: put the file in the same folder as main.html and name it cv.pdf.
+                 Both "Download CV" buttons point to it. Until it's added, they lead to a missing file. -->
+            <a class="cv-button" href="cv.pdf" download>Download CV</a>
+        </div>
     </section>
 
-    <section id="publications">
-        <h2>Publications</h2>
-        
+    <section class="publications" id="publications">
+        <div class="list-head">
+            <h2>Publications</h2>
+            <!-- script.js writes "Showing Race · 2 of 4" here, plus a Show all button.
+                 aria-live makes screen readers announce the change. -->
+            <p class="filter-status" aria-live="polite"></p>
+        </div>
+
+        <!-- Edit publications here. script.js reads this list for the marquee,
+             and matches each link to its themes (PUBLICATION_THEMES in script.js). -->
         <ul class="pubs">
             <li>
                 <span class="year">2026</span>
-                <a href="https://digitalcollections.usfca.edu/digital/collection/p15129coll6/id/1809/rec/1">"Triple Threat" : Navigating Race, Gender and Punk Resistance</a>
+                <a href="https://digitalcollections.usfca.edu/digital/collection/p15129coll6/id/1809/rec/1">
+                    <span class="title">"Triple Threat" : Navigating Race, Gender and Punk Resistance</span>
+                    <span class="venue">USF Digital Collections</span>
+                </a>
             </li>
             <li>
                 <span class="year">2023</span>
-                <a href="https://sffoghorn.com/gender-ambiguous-self-expression-raises-risks-for-people-of-color/">Gender ambiguous self-expression raises risks for people of color</a>
+                <a href="https://sffoghorn.com/gender-ambiguous-self-expression-raises-risks-for-people-of-color/">
+                    <span class="title">Gender ambiguous self-expression raises risks for people of color</span>
+                    <span class="venue">San Francisco Foghorn</span>
+                </a>
             </li>
             <li>
                 <span class="year">2023</span>
-                <a href="https://sffoghorn.com/period-products-should-not-be-luxury-goods/">Period products should not be luxury goods</a>
+                <a href="https://sffoghorn.com/period-products-should-not-be-luxury-goods/">
+                    <span class="title">Period products should not be luxury goods</span>
+                    <span class="venue">San Francisco Foghorn</span>
+                </a>
             </li>
             <li>
                 <span class="year">2023</span>
-                <a href="https://sffoghorn.com/cancellation-of-queer-shows-points-to-resurging-mainstream-homophobia/">Cancellation of queer shows points to resurging mainstream homophobia</a>
+                <a href="https://sffoghorn.com/cancellation-of-queer-shows-points-to-resurging-mainstream-homophobia/">
+                    <span class="title">Cancellation of queer shows points to resurging mainstream homophobia</span>
+                    <span class="venue">San Francisco Foghorn</span>
+                </a>
             </li>
         </ul>
     </section>
+
+    <footer class="site-footer">
+        <p>Analicia Parish · <a href="#top" class="back-to-top">Back to top</a></p>
+    </footer>
 </body>
 
 </html>

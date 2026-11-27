@@ -1,0 +1,9 @@
+# Claude / skill tooling (local setup, not part of the site)
+.claude/
+skills-lock.json
+
+# Impeccable working files: test screenshots, mocks, caches, per-machine settings
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/hook.cache.json
+.impeccable/config.local.json

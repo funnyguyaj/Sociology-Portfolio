@@ -1,10 +1,829 @@
-body {
-    font-family: Georgia, serif;
-    background: #EDF0F3;
-    color: #16202E;
-    margin: 0;
-    padding: 2rem;
+/* ==========================================================================
+   Analicia Parish: portfolio
+   Sections, top to bottom:
+     Tokens · Base · Pinned name bar · Hero · Theme buttons · Marquee
+     About · Publications · Footer · Small screens · Reduced motion
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap");
+
+/* --- Tokens -------------------------------------------------------------- */
+
+:root {
+    /* Ground and ink */
+    --paper: #EDF0F3;
+    --paper-deep: #E1E6EB;
+    --ink: #16202E;
+    --ink-soft: #4A5463;          /* 7.0:1 on paper */
+    --rule: rgb(22 32 46 / 0.16);
+    --rule-strong: var(--ink);
+
+    /* Theme colours. script.js reads these by name (see THEMES in script.js),
+       so one change here updates the dots, buttons, rows and marquee. */
+    --theme-race: #B0302A;        /* crimson */
+    --theme-gender: #A86B00;      /* ochre   */
+    --theme-queer: #B23E78;       /* rose    */
+    --theme-punk: #2C6A4D;        /* green   */
+
+    /* Type */
+    --font-display: "Bricolage Grotesque", "Arial Narrow", sans-serif;
+    --font-text: "Source Serif 4", Georgia, serif;
+
+    /* Space */
+    --gutter: clamp(1.25rem, 5vw, 4rem);
+    --section-gap: clamp(4.5rem, 10vw, 8rem);
+    --bar-height: 3.6rem;         /* height of the pinned name bar */
+    --dot-gap: 26px;              /* spacing of the dot grid (CSS + JS) */
+
+    /* Motion (Emil Kowalski's curves) */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
-h1 {
-    font-size: 4rem;
+
+/* --- Base ---------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--paper);
+    color: var(--ink);
+    scrollbar-color: var(--ink-soft) var(--paper);
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-text);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    font-optical-sizing: auto;
+    caret-color: var(--theme-race);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+a {
+    color: inherit;
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+}
+
+:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+/* --- Pinned name bar ----------------------------------------------------- */
+
+/* The bar's background. It sticks to the top and fades in once the name
+   has shrunk (script.js adds .is-pinned to <html>). The negative margin
+   means it takes up no space in the page. */
+.pin-bg {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    height: var(--bar-height);
+    margin-bottom: calc(var(--bar-height) * -1);
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule-strong);
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+/* A zero-height sticky layer that holds the name and nav above everything. */
+.pin {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    height: 0;
+}
+
+/* The name. script.js moves and scales it with `transform` while you scroll.
+   transform-origin 0 0 means it shrinks toward its top-left corner. */
+.pin-name {
+    position: absolute;
+    top: 0;
+    left: var(--gutter);
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.4rem, 15vw, 14rem);
+    font-weight: 800;
+    font-variation-settings: "wdth" 78, "opsz" 96;
+    line-height: 0.8;
+    letter-spacing: -0.012em;
+    white-space: nowrap;
+    transform-origin: 0 0;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.pin-nav {
+    position: absolute;
+    top: 0;
+    right: var(--gutter);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: var(--bar-height);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+}
+
+/* Hidden pieces of the bar use opacity (for the fade) plus visibility, so
+   they can't be clicked or reached with Tab while invisible. The visibility
+   change waits until the fade-out has finished (the 200ms delay). */
+.pin-link,
+.cv-button--bar {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* About / Publications: the underline is always there but transparent,
+   so on hover its colour can FADE in (160ms) instead of snapping on,
+   the same soft feel as the CV button's colour swap. */
+.pin-link {
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    transition:
+        opacity 200ms ease,
+        visibility 0s linear 200ms,
+        text-decoration-color 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .pin-link:hover {
+        text-decoration-color: currentColor;
+    }
+}
+
+/* Once the name has shrunk: the bar background and all three items
+   (About, Publications, Download CV) fade in together. */
+.is-pinned .pin-bg {
+    opacity: 1;
+}
+
+.is-pinned .pin-link,
+.is-pinned .cv-button--bar {
+    opacity: 1;
+    visibility: visible;
+}
+
+.is-pinned .pin-link {
+    transition:
+        opacity 200ms ease,
+        visibility 0s,
+        text-decoration-color 160ms ease;
+}
+
+/* --- Download CV button -------------------------------------------------- */
+
+.cv-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.8rem;
+    padding: 0.6rem 1.15rem 0.65rem 0.95rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+    line-height: 1.2;
+    text-decoration: none;
+    /* Colour swaps use plain ease; the press uses a strong ease-out. */
+    transition:
+        background-color 160ms ease,
+        color 160ms ease,
+        transform 160ms var(--ease-out);
+}
+
+/* A drawn download arrow (arrow into a tray), painted in the text colour. */
+.cv-button::before {
+    content: "";
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='square'%3E%3Cpath d='M10 3v9M6 8.5l4 4 4-4M4 16h12'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='square'%3E%3Cpath d='M10 3v9M6 8.5l4 4 4-4M4 16h12'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Hover: swap to an outlined button (mouse devices only). */
+@media (hover: hover) and (pointer: fine) {
+    .cv-button:hover {
+        background: transparent;
+        color: var(--ink);
+    }
+}
+
+.cv-button:focus-visible {
+    border-radius: 999px;
+}
+
+/* Press feedback */
+.cv-button:active {
+    transform: scale(0.97);
+}
+
+/* The smaller version that lives in the pinned bar */
+.cv-button--bar {
+    margin-top: 0;
+    padding: 0.35rem 0.9rem 0.4rem 0.75rem;
+    font-size: 0.95rem;
+    /* Its own full list: the fade in/out plus the normal button transitions.
+       (A single `transition` line replaces any earlier one, so all go here.) */
+    transition:
+        opacity 200ms ease,
+        visibility 0s linear 200ms,
+        background-color 160ms ease,
+        color 160ms ease,
+        transform 160ms var(--ease-out);
+}
+
+.is-pinned .cv-button--bar {
+    transition:
+        opacity 200ms ease,
+        visibility 0s,
+        background-color 160ms ease,
+        color 160ms ease,
+        transform 160ms var(--ease-out);
+}
+
+.cv-button--bar::before {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* Jump links (About, Publications) land below the bar instead of under it. */
+section {
+    scroll-margin-top: calc(var(--bar-height) + 1rem);
+}
+
+/* --- Hero ---------------------------------------------------------------- */
+
+.hero {
+    position: relative;
+    isolation: isolate;            /* keeps the canvas's layering inside the hero */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;     /* intro + buttons sit low; the name floats above */
+    min-height: 100svh;
+    overflow: hidden;
+}
+
+/* The canvas covers the whole hero, behind the text. */
+.dot-field {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+}
+
+/* Static dot grid shown only if JavaScript doesn't run.
+   script.js adds .has-field to <html> once the canvas is drawing. */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(circle at center, var(--ink) 2px, transparent 2.5px);
+    background-size: var(--dot-gap) var(--dot-gap);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.has-field .hero::before {
+    display: none;
+}
+
+/* The text block. pointer-events: none lets the mouse "fall through" the
+   empty parts to the dots, while the children below stay clickable. */
+.hero-inner {
+    padding: 0 var(--gutter) 1.8rem;
+    pointer-events: none;
+}
+
+.hero-inner > * {
+    pointer-events: auto;
+}
+
+.hint {
+    width: fit-content;
+    margin: 1rem 0 0;
+    padding: 0.1rem 0.4rem 0.1rem 0;
+    background: var(--paper);      /* solid, so dots don't run through the words */
+    box-shadow: -0.6rem 0 0 var(--paper); /* extends the backing a little to the left without moving the text */
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+    color: var(--ink-soft);
+}
+
+/* --- Theme buttons (built by script.js) ---------------------------------- */
+
+.theme-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.theme-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.5rem 1rem 0.55rem 0.8rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);      /* solid, so dots never sit behind the label */
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+    line-height: 1.2;
+    cursor: pointer;
+    /* Colour changes use plain ease; the press uses a strong ease-out. */
+    transition:
+        background-color 160ms ease,
+        color 160ms ease,
+        transform 160ms var(--ease-out);
+}
+
+/* The coloured dot inside each button. script.js sets --swatch per button. */
+.swatch {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--swatch, var(--ink));
+}
+
+.theme-button:focus-visible {
+    border-radius: 999px;
+}
+
+/* Hover only on devices with a real mouse, so a tap doesn't leave it stuck. */
+@media (hover: hover) and (pointer: fine) {
+    .theme-button:hover {
+        background: var(--ink);
+        color: var(--paper);
+    }
+}
+
+/* The selected filter (aria-pressed="true") stays filled. */
+.theme-button[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+/* Press feedback: a slight shrink confirms the click. */
+.theme-button:active {
+    transform: scale(0.97);
+}
+
+/* --- Marquee (built by script.js) ---------------------------------------- */
+
+.marquee {
+    position: relative;
+    overflow: hidden;
+    padding: 0.85rem 0;
+    border-block: 1px solid var(--rule-strong);
+    background: var(--paper);
+    white-space: nowrap;
+}
+
+/* Docked: script.js moves the strip INTO the pinned bar (the .pin layer)
+   and sets its left and width to the gap between the name and the links.
+   No borders or background of its own: it's simply part of the bar now. */
+.pin > .marquee {
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    height: var(--bar-height);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    /* Short fades at both ends, so titles slide in and out softly
+       instead of being cut off right next to the name or the links. */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+}
+
+/* Titles a touch smaller in the bar, to sit level with the links. */
+.pin > .marquee .marquee-item {
+    font-size: 0.95rem;
+}
+
+/* The moving strip. script.js slides it with `transform`. */
+.marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+}
+
+/* One full set of titles. The track holds two identical sets side by side:
+   when the first has scrolled fully out of view, script.js jumps back by
+   exactly one set's width, and because the second set looks the same,
+   the jump is invisible: that's the "seamless" loop. */
+.marquee-group {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    padding-right: 1.75rem;        /* same as the gap, so the seam matches */
+}
+
+.marquee-item {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-variation-settings: "wdth" 90, "opsz" 18;
+    text-decoration: none;
+}
+
+/* Small coloured dots between titles: one per theme of the title before them. */
+.marquee-dots {
+    display: inline-flex;
+    gap: 0.3rem;
+}
+
+.marquee-dots .swatch {
+    width: 0.6rem;
+    height: 0.6rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .marquee-item:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+    }
+}
+
+.marquee-item:focus-visible {
+    outline-offset: 2px;
+}
+
+/* --- About --------------------------------------------------------------- */
+
+.about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: start;
+    max-width: 64rem;
+    margin-top: var(--section-gap);
+    padding-inline: var(--gutter);
+}
+
+h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    font-variation-settings: "wdth" 85, "opsz" 48;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.about h2 {
+    margin-bottom: 1.2rem;
+}
+
+.about-text p {
+    max-width: 36rem;
+    margin: 0 0 1rem;
+}
+
+/* Fact list: label column + value column */
+.facts {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 0.6rem 1rem;
+    max-width: 36rem;
+    margin: 1.8rem 0 0;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--rule-strong);
+}
+
+.facts dt {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+}
+
+.facts dd {
+    margin: 0;
+    color: var(--ink-soft);
+}
+
+/* Portrait */
+.portrait {
+    width: 100%;
+    max-width: 20rem;
+    margin: 0;
+}
+
+/* The real photo, once it's added */
+.portrait img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+}
+
+/* Placeholder: a dashed 4:5 frame filled with the same dots as the hero,
+   so it reads as an empty slot rather than a finished picture. */
+.portrait-frame {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    border: 1px dashed var(--ink-soft);
+    background-color: var(--paper-deep);
+    background-image: radial-gradient(circle at center, rgb(22 32 46 / 0.28) 1.4px, transparent 1.9px);
+    background-size: 14px 14px;
+    background-position: center;
+}
+
+.portrait-frame span {
+    padding: 0.35rem 0.7rem;
+    background: var(--paper-deep);
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+    color: var(--ink-soft);
+}
+
+/* --- Publications -------------------------------------------------------- */
+
+.publications {
+    max-width: 64rem;
+    margin-top: var(--section-gap);
+    padding-inline: var(--gutter);
+}
+
+.list-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+/* "Showing Race · 2 of 4  Show all" (written by script.js) */
+.filter-status {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+    color: var(--ink-soft);
+}
+
+.filter-status button {
+    margin-left: 0.5rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+}
+
+.pubs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1.5px solid var(--rule-strong);
+}
+
+/* One row: year | title + venue | theme dots */
+.pubs li {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    column-gap: 1rem;
+    align-items: baseline;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--rule);
+    transition: transform 160ms var(--ease-out);
+}
+
+.pubs .year {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums lining-nums;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+    color: var(--ink-soft);
+}
+
+.pubs a {
+    display: block;
+    text-decoration: none;
+}
+
+.pubs .title {
+    display: block;
+    font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+    font-weight: 450;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-wrap: balance;
+    transition: text-decoration-color 180ms ease;
+}
+
+/* Venue line, with a small drawn arrow saying "opens another site" */
+.pubs .venue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.3rem;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--ink-soft);
+}
+
+.pubs .venue::after {
+    content: "";
+    width: 0.85rem;
+    height: 0.85rem;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='square'%3E%3Cpath d='M5 15 15 5M7 5h8v8'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='square'%3E%3Cpath d='M5 15 15 5M7 5h8v8'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 220ms var(--ease-out);
+}
+
+/* The whole row is the click target; this layer also carries the hover tint. */
+.pubs a::before {
+    content: "";
+    position: absolute;
+    inset: 0 -0.75rem;
+    z-index: -1;
+    background-color: transparent;
+    transition: background-color 200ms ease;
+}
+
+/* Theme dots on the right (added by script.js) */
+.row-themes {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-self: center;
+}
+
+.row-themes .swatch {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+.pubs a:focus-visible {
+    outline: none;
+}
+
+.pubs li:has(a:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .pubs li:hover a::before {
+        background-color: var(--paper-deep);
+    }
+
+    .pubs li:hover .title {
+        text-decoration-color: currentColor;
+    }
+
+    .pubs li:hover .venue::after {
+        transform: translate(2px, -2px);
+    }
+}
+
+.pubs li:active {
+    transform: scale(0.995);
+}
+
+/* `hidden` normally means display:none, but `.pubs li` sets display:grid,
+   which would win. This makes filtered-out rows really disappear. */
+.pubs li[hidden] {
+    display: none;
+}
+
+/* Rows that come back after a filter change fade up instead of popping in. */
+.pubs li.is-revealed {
+    animation: row-in 280ms var(--ease-out);
+}
+
+@keyframes row-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+/* --- Footer -------------------------------------------------------------- */
+
+.site-footer {
+    margin-top: var(--section-gap);
+    padding: 2rem var(--gutter) 3rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-variation-settings: "wdth" 90, "opsz" 14;
+    color: var(--ink-soft);
+}
+
+.site-footer p {
+    margin: 0;
+}
+
+/* --- Small screens ------------------------------------------------------- */
+
+@media (max-width: 600px) {
+    .pin-nav {
+        gap: 1rem;
+        font-size: 0.95rem;
+    }
+
+    /* Not enough room beside the name on a phone: keep only the CV button. */
+    .pin-link {
+        display: none;
+    }
+
+    .about {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .portrait {
+        max-width: 15rem;
+    }
+
+    .facts {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.1rem;
+    }
+
+    .facts dd {
+        margin-bottom: 0.7rem;
+    }
+
+    .pubs li {
+        grid-template-columns: 3rem minmax(0, 1fr) auto;
+        column-gap: 0.6rem;
+    }
+}
+
+/* --- Reduced motion: keep colour changes, drop movement ------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    /* No auto-scrolling: the strip can be scrolled sideways by hand. */
+    .marquee {
+        overflow-x: auto;
+    }
+
+    .pubs li,
+    .pubs .venue::after {
+        transition: none;
+    }
+
+    .pubs li:active,
+    .theme-button:active,
+    .cv-button:active {
+        transform: none;
+    }
+
+    @keyframes row-in {
+        from {
+            opacity: 0;
+        }
+    }
 }
