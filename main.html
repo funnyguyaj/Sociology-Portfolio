@@ -20,7 +20,10 @@
         <nav class="pin-nav" aria-label="Main">
             <a class="pin-link" href="#about">About</a>
             <a class="pin-link" href="#publications">Publications</a>
-            <a class="cv-button cv-button--bar" href="cv.pdf" download>Download CV</a>
+            <a class="pin-link" href="#experience">Experience</a>
+            <a class="pin-link" href="#education">Education</a>
+            <a class="pin-link" href="#contact">Contact</a>
+            <a class="cv-button cv-button--bar" href="resume.pdf" download>Download Resume</a>
         </nav>
     </div>
 
@@ -52,62 +55,234 @@
 
         <div class="about-text">
             <h2>About</h2>
-            <p>Write a Bio here.</p>
+            <p class="bio">Write a Bio here.</p>
 
-            <dl class="facts">
-                <dt>Education</dt>
-                <dd>Sociology, University of San Francisco</dd>
-                <dt>Honors</dt>
-                <dd>Honors concentration in Sociology</dd>
-                <dt>Minor</dt>
-                <dd>Advertising</dd>
-            </dl>
-
-            <!-- CV DOWNLOAD: put the file in the same folder as main.html and name it cv.pdf.
-                 Both "Download CV" buttons point to it. Until it's added, they lead to a missing file. -->
-            <a class="cv-button" href="cv.pdf" download>Download CV</a>
+            <!-- RESUME DOWNLOAD: put the file in the same folder as main.html and name it resume.pdf.
+                 Both "Download Resume" buttons point to it. Until it's added, they lead to a missing file. -->
+            <a class="cv-button" href="resume.pdf" download>Download Resume</a>
         </div>
     </section>
 
+    <!-- PUBLICATIONS: each piece is a "cover" in its theme colour. The FIRST
+         publication in the list is the big cover; the next three sit beside it. -->
     <section class="publications" id="publications">
-        <div class="list-head">
-            <h2>Publications</h2>
-            <!-- script.js writes "Showing Race · 2 of 4" here, plus a Show all button.
-                 aria-live makes screen readers announce the change. -->
-            <p class="filter-status" aria-live="polite"></p>
-        </div>
+        <div>
+            <div class="list-head">
+                <h2>Publications</h2>
+                <!-- script.js writes "Showing Race · 2 of 4" here, plus a Show all button.
+                     aria-live makes screen readers announce the change. -->
+                <p class="filter-status" aria-live="polite"></p>
+            </div>
 
-        <!-- Edit publications here. script.js reads this list for the marquee,
-             and matches each link to its themes (PUBLICATION_THEMES in script.js). -->
-        <ul class="pubs">
-            <li>
-                <span class="year">2026</span>
-                <a href="https://digitalcollections.usfca.edu/digital/collection/p15129coll6/id/1809/rec/1">
-                    <span class="title">"Triple Threat" : Navigating Race, Gender and Punk Resistance</span>
-                    <span class="venue">USF Digital Collections</span>
-                </a>
+            <!-- Edit publications here. script.js reads this list for the marquee.
+                 data-theme says which theme a publication belongs to. Its value must
+                 match an "id" in the THEMES list at the top of script.js
+                 (race, gender, queer, punk). To add a publication, copy a whole
+                 <li> … </li> block and change the year, link, title, venue and theme.
+                 The FIRST <li> is the featured (large) one. -->
+            <ul class="pubs">
+                <li data-theme="punk">
+                    <span class="year">2026</span>
+                    <a href="https://digitalcollections.usfca.edu/digital/collection/p15129coll6/id/1809/rec/1">
+                        <span class="title">"Triple Threat" : Navigating Race, Gender and Punk Resistance</span>
+                        <span class="pub-note">Published in Writing for the Real World, 23rd Issue</span>
+                        <span class="venue">USF Digital Collections</span>
+                    </a>
+                </li>
+                <li data-theme="race">
+                    <span class="year">2023</span>
+                    <a href="https://sffoghorn.com/gender-ambiguous-self-expression-raises-risks-for-people-of-color/">
+                        <span class="title">Gender ambiguous self-expression raises risks for people of color</span>
+                        <span class="venue">San Francisco Foghorn</span>
+                    </a>
+                </li>
+                <li data-theme="gender">
+                    <span class="year">2023</span>
+                    <a href="https://sffoghorn.com/period-products-should-not-be-luxury-goods/">
+                        <span class="title">Period products should not be luxury goods</span>
+                        <span class="venue">San Francisco Foghorn</span>
+                    </a>
+                </li>
+                <li data-theme="queer">
+                    <span class="year">2023</span>
+                    <a href="https://sffoghorn.com/cancellation-of-queer-shows-points-to-resurging-mainstream-homophobia/">
+                        <span class="title">Cancellation of queer shows points to resurging mainstream homophobia</span>
+                        <span class="venue">San Francisco Foghorn</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE: most recent first.
+         Each role has a dashed "Description coming soon" placeholder. To add a
+         description, replace this line:
+             <p class="role-desc role-desc--placeholder">Description coming soon</p>
+         with:
+             <p class="role-desc">One or two sentences about the role.</p>
+         To add a role, copy one <li class="role"> … </li> block and edit it. -->
+    <section class="experience" id="experience">
+        <h2>Experience</h2>
+
+        <ul class="roles">
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Ticketing &amp; Front of House Manager</h3>
+                    <p class="role-org">The Guild Theatre <span class="role-meta">Full-time · Menlo Park, California · On-site</span></p>
+                    <p class="role-dates"><time datetime="2024-12">Dec 2024</time> – Present</p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
             </li>
-            <li>
-                <span class="year">2023</span>
-                <a href="https://sffoghorn.com/gender-ambiguous-self-expression-raises-risks-for-people-of-color/">
-                    <span class="title">Gender ambiguous self-expression raises risks for people of color</span>
-                    <span class="venue">San Francisco Foghorn</span>
-                </a>
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Box Office Attendant</h3>
+                    <p class="role-org">The Fillmore <span class="role-meta">Part-time · San Francisco, California · On-site</span></p>
+                    <p class="role-dates"><time datetime="2023-10">Oct 2023</time> – Present</p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
             </li>
-            <li>
-                <span class="year">2023</span>
-                <a href="https://sffoghorn.com/period-products-should-not-be-luxury-goods/">
-                    <span class="title">Period products should not be luxury goods</span>
-                    <span class="venue">San Francisco Foghorn</span>
-                </a>
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Music Director</h3>
+                    <p class="role-org">KUSF.org College Radio <span class="role-meta">Part-time · San Francisco, California · On-site</span></p>
+                    <p class="role-dates"><time datetime="2024-08">Aug 2024</time> – <time datetime="2025-04">Apr 2025</time></p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
             </li>
-            <li>
-                <span class="year">2023</span>
-                <a href="https://sffoghorn.com/cancellation-of-queer-shows-points-to-resurging-mainstream-homophobia/">
-                    <span class="title">Cancellation of queer shows points to resurging mainstream homophobia</span>
-                    <span class="venue">San Francisco Foghorn</span>
-                </a>
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Event Staff</h3>
+                    <p class="role-org">Rickshaw Stop <span class="role-meta">Part-time · San Francisco, California · On-site</span></p>
+                    <p class="role-dates"><time datetime="2024-04">Apr 2024</time> – <time datetime="2025-03">Mar 2025</time></p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
             </li>
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Event Staff</h3>
+                    <p class="role-org">August Hall <span class="role-meta">Part-time · San Francisco, California · On-site</span></p>
+                    <p class="role-dates"><time datetime="2024-04">Apr 2024</time> – <time datetime="2025-01">Jan 2025</time></p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
+            </li>
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Box Office Attendant</h3>
+                    <p class="role-org">Shoreline Amphitheatre Season Tickets <span class="role-meta">Part-time · Mountain View, California · On-site</span></p>
+                    <p class="role-dates"><time datetime="2024-05">May 2024</time> – <time datetime="2024-10">Oct 2024</time></p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
+            </li>
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Communications Intern</h3>
+                    <p class="role-org">Smart Justice California <span class="role-meta">Part-time · Sacramento, California · Hybrid</span></p>
+                    <p class="role-dates"><time datetime="2024-06">Jun 2024</time> – <time datetime="2024-08">Aug 2024</time></p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
+            </li>
+            <li class="role">
+                <div class="role-info">
+                    <h3 class="role-title">Communications Intern</h3>
+                    <p class="role-org">Tenoch Flores Strategies LLC <span class="role-meta">Part-time · San Francisco, California · Remote</span></p>
+                    <p class="role-dates"><time datetime="2024-01">Jan 2024</time> – <time datetime="2024-06">Jun 2024</time></p>
+                    <p class="role-desc role-desc--placeholder">Description coming soon</p>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <!-- EDUCATION: the degree on the left, awards and honours on the right
+         (stacked on narrow screens).
+         To add an award, copy one <li> … </li> in the "awards" list and edit it. -->
+    <section class="education" id="education">
+        <h2>Education</h2>
+
+        <div class="edu-grid">
+            <div class="degree">
+                <h3>B.A. in Sociology, Honors Concentration</h3>
+                <p class="degree-school">University of San Francisco</p>
+                <p class="degree-dates">
+                    <time datetime="2021-08">Aug 2021</time> – <time datetime="2025-05">May 2025</time>
+                </p>
+
+                <dl class="facts">
+                    <dt>Minor</dt>
+                    <dd>Advertising</dd>
+                    <dt>GPA</dt>
+                    <dd>3.9 major · 3.87 cumulative</dd>
+                    <dt>Activities</dt>
+                    <dd>
+                        <ul class="activities">
+                            <li>Alpha Kappa Delta, the International Sociology Honor Society</li>
+                            <li>KUSF College Radio, Music Director</li>
+                            <li>YDSA, Communications Director</li>
+                            <li>The Foghorn Newspaper</li>
+                        </ul>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="awards-block">
+                <h3 class="subhead">Awards &amp; honors</h3>
+                <ul class="awards">
+                    <li>
+                        <span class="year">2025</span>
+                        <span class="award-name">Writing for the Real World, 23rd Issue</span>
+                        <span class="award-from">Published “Triple Threat: Navigating Race, Gender and Punk Resistance”</span>
+                    </li>
+                    <li>
+                        <span class="year">2025</span>
+                        <span class="award-name">Valedictorian Finalist</span>
+                        <span class="award-from">College of Arts and Sciences</span>
+                    </li>
+                    <li>
+                        <span class="year">2025</span>
+                        <span class="award-name">Esther Madriz Prize for Social Justice</span>
+                        <span class="award-from">Sociology Department</span>
+                    </li>
+                    <li>
+                        <span class="year">2025</span>
+                        <span class="award-name">William A. Edwards Sociology Paper Prize</span>
+                        <span class="award-from">Sociology Department</span>
+                    </li>
+                    <li>
+                        <span class="year">2025</span>
+                        <span class="award-name">Alpha Kappa Delta, the International Sociology Honor Society</span>
+                        <span class="award-from">Sociology Department</span>
+                    </li>
+                    <li>
+                        <span class="year">2021–25</span>
+                        <span class="award-name">Dean’s List, 7 consecutive semesters</span>
+                        <span class="award-from">College of Arts and Sciences</span>
+                    </li>
+                    <li>
+                        <span class="year">2023</span>
+                        <span class="award-name">J. Paul Getty Honors Grant</span>
+                        <span class="award-from">Honors College</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT: the page's closing section.
+         The dashed boxes are placeholders. Replace them with the real details:
+
+         Email — replace the whole <p class="contact-email …"> line with:
+             <a class="contact-email" href="mailto:name@example.com">name@example.com</a>
+
+         LinkedIn — replace the <span class="contact-placeholder">…</span> line with:
+             <a class="contact-link" href="https://www.linkedin.com/in/your-profile/">LinkedIn</a>
+    -->
+    <section class="contact" id="contact">
+        <h2>Contact</h2>
+
+        <p class="contact-email contact-email--placeholder">Email address coming soon</p>
+
+        <ul class="contact-links">
+            <li><span class="contact-placeholder">LinkedIn link coming soon</span></li>
+            <li><a class="cv-button" href="resume.pdf" download>Download Resume</a></li>
         </ul>
     </section>
 

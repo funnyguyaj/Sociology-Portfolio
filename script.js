@@ -11,48 +11,35 @@
      5. Pinned name    – the big name shrinks into the top bar as you scroll.
      6. Docking        – the marquee joins the top bar when it scrolls up to it.
 
-   The two lists right below are the parts you'll want to edit.
+   The THEMES list right below is the part you'll want to edit.
+   Which publication belongs to which theme lives in main.html, as a
+   data-theme="…" attribute on each publication's <li>.
    ========================================================================== */
 
 
 /* --------------------------------------------------------------------------
    THEMES  (edit me)
-   id     – a short internal name, used in PUBLICATION_THEMES below
-   label  – the text on the button
+   id     – a short internal name. Each publication <li> in main.html points
+            to one of these with data-theme="id".
+   name   – the theme's name as visitors see it (buttons, status line)
    color  – the name of a CSS variable in style.css (:root). Keeping colours
             in style.css means one change there updates everything.
    -------------------------------------------------------------------------- */
 const THEMES = [
-    { id: "race",   label: "Race",              color: "--theme-race" },
-    { id: "gender", label: "Gender",            color: "--theme-gender" },
-    { id: "queer",  label: "Queer culture",     color: "--theme-queer" },
-    { id: "punk",   label: "Punk & resistance", color: "--theme-punk" },
+    { id: "race",   name: "Race",              color: "--theme-race" },
+    { id: "gender", name: "Gender",            color: "--theme-gender" },
+    { id: "queer",  name: "Queer culture",     color: "--theme-queer" },
+    { id: "punk",   name: "Punk & resistance", color: "--theme-punk" },
 ];
 
 
 /* --------------------------------------------------------------------------
-   WHICH THEME EACH PUBLICATION BELONGS TO  (edit me)
-   Matched by the publication's link (its href in main.html).
-   One theme per publication; use an id from THEMES above.
+   FILTER STYLE  (edit me)
+   What happens to publications that DON'T match the chosen theme:
+     "dim"  – they stay in the list but are greyed out
+     "hide" – they disappear until the filter is cleared
    -------------------------------------------------------------------------- */
-const PUBLICATION_THEMES = [
-    {
-        url: "https://digitalcollections.usfca.edu/digital/collection/p15129coll6/id/1809/rec/1",
-        theme: "punk",
-    },
-    {
-        url: "https://sffoghorn.com/gender-ambiguous-self-expression-raises-risks-for-people-of-color/",
-        theme: "race",
-    },
-    {
-        url: "https://sffoghorn.com/period-products-should-not-be-luxury-goods/",
-        theme: "gender",
-    },
-    {
-        url: "https://sffoghorn.com/cancellation-of-queer-shows-points-to-resurging-mainstream-homophobia/",
-        theme: "queer",
-    },
-];
+const FILTER_MODE = "dim";
 
 
 /* --------------------------------------------------------------------------
@@ -120,16 +107,16 @@ let resyncMarqueePause = () => {};
 // Slides the marquee's titles sideways by some pixels (filled in by section 4).
 let shiftMarquee = () => {};
 
-// Look up the theme of one publication row, by its link.
+// Look up the theme of one publication row from its data-theme attribute.
+// In JavaScript, data-theme="race" is read as row.dataset.theme ("race").
 // Returns the theme's position in THEMES (0, 1, 2…), or null if not found.
 function themeForRow(row) {
-    const link = row.querySelector("a");
-    if (!link) return null;
-    const entry = PUBLICATION_THEMES.find((item) => sameUrl(item.url, link.href));
-    const index = entry ? THEMES.findIndex((theme) => theme.id === entry.theme) : -1;
+    const id = row.dataset.theme;
+    const index = THEMES.findIndex((theme) => theme.id === id);
     if (index === -1) {
-        // A note in the browser console (F12) if a publication was missed.
-        console.warn("No valid theme in PUBLICATION_THEMES for:", link.href);
+        // A note in the browser console (F12) if a publication has a missing
+        // or misspelled data-theme.
+        console.warn(`Publication has data-theme="${id}", which isn't an id in THEMES:`, row);
         return null;
     }
     return index;
@@ -155,7 +142,7 @@ const themeButtons = THEMES.map((theme, index) => {
     button.className = "theme-button";
     // aria-pressed tells screen readers this button is an on/off toggle.
     button.setAttribute("aria-pressed", "false");
-    button.append(makeSwatch(index), theme.label);
+    button.append(makeSwatch(index), theme.name);
 
     // Hover and keyboard focus PREVIEW the theme in the dot field.
     const startPreview = () => { previewTheme = index; refreshDots(); };
@@ -165,29 +152,45 @@ const themeButtons = THEMES.map((theme, index) => {
     button.addEventListener("focus", startPreview);
     button.addEventListener("blur", endPreview);
 
-    // Click FILTERS the list. Clicking the selected theme again clears it.
-    button.addEventListener("click", () => setFilter(activeTheme === index ? null : index));
+    // Click FILTERS the list (clicking the selected theme again clears it),
+    // then takes the visitor down to the Publications section to see it.
+    button.addEventListener("click", () => {
+        setFilter(activeTheme === index ? null : index);
+        scrollToPublications();
+    });
 
     if (filterBar) filterBar.append(button);
     return button;
 });
 
-// Each publication row also gets its theme's dot on the right.
+// Each publication becomes a "cover" in its theme's colour (style.css reads
+// --cover), and gets its theme's name written on it, so the colour is never
+// the only way to tell the themes apart.
 for (const row of publicationRows) {
     const themeIndex = themeForRow(row);
     if (themeIndex === null) continue;
-    const holder = document.createElement("span");
-    holder.className = "row-themes";
-    const swatch = makeSwatch(themeIndex);
-    swatch.title = THEMES[themeIndex].label; // tooltip on hover
-    holder.append(swatch);
-    row.append(holder);
+    row.style.setProperty("--cover", `var(${THEMES[themeIndex].color})`);
+    const label = document.createElement("span");
+    label.className = "theme-label";
+    label.textContent = THEMES[themeIndex].name;
+    row.append(label);
 }
 
 
 /* ==========================================================================
    2. Filtering the publication list
    ========================================================================== */
+
+// Scroll down to the Publications section.
+// scrollIntoView lines the section up with the top of the screen; the CSS
+// "scroll-margin-top" on sections leaves room for the pinned bar, so the
+// heading isn't hidden under it. With reduced motion we jump instead of
+// gliding (behavior "auto" means "instant" here).
+function scrollToPublications() {
+    const section = document.getElementById("publications");
+    if (!section) return;
+    section.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+}
 
 function setFilter(themeIndex) {
     activeTheme = themeIndex;
@@ -197,25 +200,32 @@ function setFilter(themeIndex) {
         button.setAttribute("aria-pressed", index === themeIndex ? "true" : "false");
     });
 
-    // Show or hide each row.
+    // Grey out (or hide) each row that doesn't match, depending on FILTER_MODE.
     let shown = 0;
     for (const row of publicationRows) {
-        const visible = themeIndex === null || themeForRow(row) === themeIndex;
-        if (visible) shown++;
+        const matches = themeIndex === null || themeForRow(row) === themeIndex;
+        if (matches) shown++;
 
-        // Rows coming back get a short fade-up (.is-revealed in style.css).
-        if (visible && row.hidden) {
-            row.classList.add("is-revealed");
-            row.addEventListener("animationend", () => row.classList.remove("is-revealed"), { once: true });
+        if (FILTER_MODE === "hide") {
+            // Rows coming back get a short fade-up (.is-revealed in style.css).
+            if (matches && row.hidden) {
+                row.classList.add("is-revealed");
+                row.addEventListener("animationend", () => row.classList.remove("is-revealed"), { once: true });
+            }
+            row.hidden = !matches;
+        } else {
+            // "dim": every row stays; non-matching ones get .is-dimmed, which
+            // style.css greys out. They're still links you can open.
+            row.hidden = false;
+            row.classList.toggle("is-dimmed", !matches);
         }
-        row.hidden = !visible;
     }
 
     // Status line next to the "Publications" heading, with a Show all button.
     if (statusLine) {
         statusLine.textContent = "";
         if (themeIndex !== null) {
-            statusLine.append(`Showing ${THEMES[themeIndex].label} · ${shown} of ${publicationRows.length}`);
+            statusLine.append(`Showing ${THEMES[themeIndex].name} · ${shown} of ${publicationRows.length}`);
             const showAll = document.createElement("button");
             showAll.type = "button";
             showAll.textContent = "Show all";
@@ -834,10 +844,4 @@ function hexToRgb(hex) {
     if (value.length === 3) value = value.split("").map((c) => c + c).join("");
     const number = parseInt(value, 16);
     return [(number >> 16) & 255, (number >> 8) & 255, number & 255];
-}
-
-// Compare two links while ignoring a trailing slash.
-function sameUrl(a, b) {
-    const clean = (url) => new URL(url, location.href).href.replace(/\/$/, "");
-    return clean(a) === clean(b);
 }
