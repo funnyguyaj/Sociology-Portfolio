@@ -33,7 +33,7 @@ The work is the differentiator. She has a published honors thesis on race, gende
 
 ## Capabilities and Constraints
 
-- Static site: plain HTML and CSS (`main.html`, `style.css`), no framework or build step.
+- Static site: plain HTML and CSS (`index.html`, `style.css`), no framework or build step.
 - **Structure: one page** with these sections: intro, About (bio), Publications, Experience, Contact, plus a portrait photo.
 - Publications are a list of external links, each with a year.
 - Undecided: hosting/deploy target; whether a downloadable PDF CV is offered; contact method (email link vs form).
@@ -46,7 +46,7 @@ The work is the differentiator. She has a published honors thesis on race, gende
 
 ## Evidence on Hand
 
-Publications (real, with live links in `main.html`):
+Publications (real, with live links in `index.html`):
 
 - 2026: "Triple Threat": Navigating Race, Gender and Punk Resistance (USF Digital Collections, honors work)
 - 2023: Gender ambiguous self-expression raises risks for people of color (SF Foghorn)
@@ -58,7 +58,7 @@ Publications (real, with live links in `main.html`):
 - Portrait photo (a placeholder slot is fine; no stock or generated faces).
 - Experience/CV entries: no positions, dates or descriptions supplied.
 - Contact details: no email or profile URLs supplied.
-- A current bio: `main.html` has placeholder text ("Write a Bio here."). The new bio must come from the user.
+- A current bio: `index.html` has placeholder text ("Write a Bio here."). The new bio must come from the user.
 
 ## Product Principles
 

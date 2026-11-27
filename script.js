@@ -12,14 +12,14 @@
      6. Docking        – the marquee joins the top bar when it scrolls up to it.
 
    The THEMES list right below is the part you'll want to edit.
-   Which publication belongs to which theme lives in main.html, as a
+   Which publication belongs to which theme lives in index.html, as a
    data-theme="…" attribute on each publication's <li>.
    ========================================================================== */
 
 
 /* --------------------------------------------------------------------------
    THEMES  (edit me)
-   id     – a short internal name. Each publication <li> in main.html points
+   id     – a short internal name. Each publication <li> in index.html points
             to one of these with data-theme="id".
    name   – the theme's name as visitors see it (buttons, status line)
    color  – the name of a CSS variable in style.css (:root). Keeping colours
@@ -81,7 +81,7 @@ const rootStyles = getComputedStyle(root);
 const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 let reduceMotion = reducedMotionQuery.matches;
 
-// Elements from main.html
+// Elements from index.html
 const hero = document.querySelector(".hero");
 const canvas = document.querySelector(".dot-field");
 const filterBar = document.querySelector(".theme-filters");
